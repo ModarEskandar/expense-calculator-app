@@ -3,10 +3,16 @@ import { FilterQuery, QueryOptions } from 'mongoose';
 
 import expenseModel, { Expense } from '../models/expense.model';
 
-// CreateExpense service
 export const createExpense = async (input: Partial<Expense>) => {
   const expense = await expenseModel.create(input);
   return omit(expense.toJSON());
+};
+
+
+export const updateExpense = async (id:string ,input :Partial<Expense>) => {
+  const expense =   await expenseModel.findByIdAndUpdate(id,input);  
+  return omit(expense?.toJSON());
+
 };
 
 // Find Expense by Id
@@ -34,6 +40,12 @@ export const findExpense = async (
   options: QueryOptions = {}
 ) => {
   return await expenseModel.findOne(query, {}, options);
+};
+
+// Find Expense by Id
+export const deleteExpense = async (id: string) => {
+  return await expenseModel.deleteOne({_id:id});
+
 };
 
 
