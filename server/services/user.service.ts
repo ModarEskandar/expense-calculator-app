@@ -1,6 +1,5 @@
-import { omit, get } from 'lodash';
+import { omit } from 'lodash';
 import { FilterQuery, QueryOptions } from 'mongoose';
-import config from 'config';
 import { excludedFields } from '../controllers/auth.controller';
 import { signJwt } from '../utils/jwt';
 import { DocumentType } from '@typegoose/typegoose';
@@ -37,7 +36,7 @@ export const signToken = async (user: DocumentType<User>) => {
   const access_token = signJwt(
     { sub: user._id },
     {
-      expiresIn: `${config.get<number>('accessTokenExpiresIn')}m`,
+      expiresIn: `${15}m`,
     }
   );
 
@@ -49,4 +48,6 @@ export const signToken = async (user: DocumentType<User>) => {
   // Return access token
   return { access_token };
 };
+
+
 

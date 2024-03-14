@@ -2,10 +2,10 @@
   "name": "expence-calc-be",
   "version": "1.0.0",
   "description": "simple expense calculator application that allows users to manage their expenses",
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
-    "serve": "node server",
-    "dev": "nodemon dist/server.js"
+    "start": "node dist/app.js",
+    "dev": "nodemon dist/app.js && cpx \"./src/email_templates/**/*\""
   },
   "keywords": [
     "expense",
@@ -19,7 +19,6 @@
   "dependencies": {
     "@typegoose/typegoose": "^12.2.0",
     "bcryptjs": "^2.4.3",
-    "config": "^3.3.11",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -45,6 +44,8 @@
     "@types/lodash": "^4.14.202",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.11.25",
+    "@types/nodemailer": "^6.4.14",
+    "cpx": "^1.5.0",
     "nodemon": "^3.1.0",
     "typescript": "^5.4.2"
   }

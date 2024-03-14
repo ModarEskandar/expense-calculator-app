@@ -1,15 +1,17 @@
-require('dotenv').config();
+import * as dotenv from "dotenv";
 import express, { NextFunction, Request, Response } from 'express';
-import config from 'config';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import userRouter from './routes/user.route';
 import authRouter from './routes/auth.route';
+import expenseRouter from './routes/expense.route';
+import categoryRouter from './routes/category.route';
 import connectDB from './db';
 
-const app = express();
+dotenv.config();
+require('dotenv').config({ path: __dirname+'/.env' });
 
-// Middleware
+const app = express();
 
 // 1. Body Parser
 app.use(express.json({ limit: '10kb' }));
@@ -21,7 +23,7 @@ app.use(cookieParser());
 // 4. Cors
 app.use(
   cors({
-    origin: config.get<string>('origin'),
+    origin: process.env.ORIGIN,
     credentials: true,
   })
 );
@@ -29,14 +31,10 @@ app.use(
 // 5. Routes
 app.use('/api/users', userRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/expenses', expenseRouter);
+app.use('/api/categories', categoryRouter);
 
-// Testing
-app.get('/healthChecker', (req: Request, res: Response, next: NextFunction) => {
-  res.status(200).json({
-    status: 'success',
-    message: 'Welcome to CodevoWeb????',
-  });
-});
+
 
 // UnKnown Routes
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
@@ -56,9 +54,12 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-const port = config.get<number>('port');
+// const port = config.get<number>('port');
+const port = process.env.PORT;
 app.listen(port, () => {
   console.log(`Server started on port: ${port}`);
+  console.log(process.env.NODE_ENV);
+  
   // ? call the connectDB function here
   connectDB();
 });

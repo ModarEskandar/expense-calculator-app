@@ -1,10 +1,14 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-let DB_URI = process.env.DB_URI;
 
 const connectDB = async () => {
   try {    
-    await mongoose.connect(DB_URI);
+    var config = process.env.APP_CONFIG?JSON.parse(process.env.APP_CONFIG!):{};
+    var mongoPassword = 'Madridian123!@#';
+
+    let DB_URI =  process.env.APP_CONFIG?"mongodb://" + config.mongo.user + ":" + encodeURIComponent(mongoPassword) + "@" + 
+    config.mongo.hostString:process.env.DB_URI;    
+    await mongoose.connect(DB_URI!);
       console.log("Successfully connected to database")  }
        catch (error: any) {
     console.log('Unable to connect to database: ',error.message);

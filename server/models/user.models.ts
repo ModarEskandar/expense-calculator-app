@@ -1,5 +1,6 @@
 import {
     DocumentType,
+    Ref,
     getModelForClass,
     index,
     modelOptions,
@@ -7,6 +8,7 @@ import {
     prop,
   } from '@typegoose/typegoose';
   import bcrypt from 'bcryptjs';
+import { Expense } from './expense.model';
   
   @index({ email: 1 })
   @pre<User>('save', async function () {
@@ -28,7 +30,7 @@ import {
     @prop()
     name: string;
   
-    @prop({ unique: true, required: true })
+    @prop({ unique: true, required: true, lowercase: true, trim: true })
     email: string;
   
     @prop({ required: true, minlength: 8, maxLength: 32, select: false })
@@ -36,7 +38,13 @@ import {
   
     @prop({ default: 'user' })
     role: string;
-  
+
+    @prop({ })
+    expenses: [
+      {
+        expense: Ref<Expense,string>;
+      },
+    ]
     // Instance method to check if passwords match
     async comparePasswords(hashedPassword: string, candidatePassword: string) {
       return await bcrypt.compare(candidatePassword, hashedPassword);
