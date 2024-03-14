@@ -181,13 +181,16 @@ export const columns: ColumnDef<Expense>[] = [
             <DropdownMenuContent align="end" className="bg-dark-4">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-
+              <DropdownMenuItem
+              >
+                <Link href={`expenses/${expense._id}`}>Expense Details</Link> 
+              </DropdownMenuItem>
               <DropdownMenuItem
               >
                 <Link href={`expenses/edit/${expense._id}`}>Edit Expense</Link> 
               </DropdownMenuItem>
               <DropdownMenuItem>
-              <Link href={`expenses/${expense._id}`}>Edit Expense</Link> 
+              <Link href={`expenses/delete/${expense._id}`}>Delete Expense</Link> 
 
               </DropdownMenuItem>
             </DropdownMenuContent>

@@ -1,3 +1,5 @@
+"use client";
+
 import { useUserContext } from "@/app/context/AuthContext";
 import { Expense } from "@/app/types";
 import { multiFormatDateString } from "@/lib/utils";
@@ -10,8 +12,6 @@ type ExpenseCardProps = {
 const ExpenseCard = ( {expense} : ExpenseCardProps) => {
   const { user } = useUserContext();
 
-  if (!expense.user) return;
-
   return (
     <div className="expense-card">
       <div className="flex-between">
@@ -23,13 +23,14 @@ const ExpenseCard = ( {expense} : ExpenseCardProps) => {
               {user.name}
             </p>
             <div className="flex-center gap-2 text-light-3">
+            •
+              <p className="subtle-semibold lg:small-regular">
+                Expense is added
+              </p>
               <p className="subtle-semibold lg:small-regular ">
                 {multiFormatDateString(expense.date.toString())}
               </p>
-              •
-              <p className="subtle-semibold lg:small-regular">
-                {expense.category}
-              </p>
+              
             </div>
           </div>
         </div>
@@ -48,7 +49,8 @@ const ExpenseCard = ( {expense} : ExpenseCardProps) => {
 
       <Link href={`/expenses/${expense._id}`}>
         <div className="small-medium lg:base-medium py-5">
-          <p>{expense.name}</p>
+          <p>{`${expense.name} costs ${expense.amount}$`}</p> 
+          <p></p>
           <p></p>
           <ul className="flex gap-1 mt-2">
             

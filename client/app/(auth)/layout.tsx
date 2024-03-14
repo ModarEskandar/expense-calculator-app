@@ -5,7 +5,6 @@ export default function AuthLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const isAuthenticated = false;
 
   return (
       

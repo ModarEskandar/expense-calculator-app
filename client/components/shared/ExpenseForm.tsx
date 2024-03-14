@@ -14,7 +14,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/components/ui/use-toast";
 
-import Loader from "@/components/shared/Loader";
 import { ExpenseFormProps } from "@/app/types";
 import { useUserContext } from "@/app/context/AuthContext";
 import { useCreateExpense, useGetCategories, useUpdateExpense } from "@/lib/react-query/queries";
@@ -25,10 +24,9 @@ import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
 import { Textarea } from "../ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Loader } from "lucide-react";
 import { formatDate } from "date-fns";
 import Link from "next/link";
-import { useEffect } from "react";
 
 const ExpenseForm = ({ expense, action }: ExpenseFormProps) => {
   const { mutateAsync: createExpense, isPending: isCreatingExpense } =
@@ -42,14 +40,14 @@ const ExpenseForm = ({ expense, action }: ExpenseFormProps) => {
   const router = useRouter()
   const form = useForm<z.infer<typeof ExpenseSchema>>({
     resolver: zodResolver(ExpenseSchema),
-    values: {
+    defaultValues: {
       name: expense ? expense.name : "",
       date: expense ? expense.date : new Date(),
       amount: expense ? expense.amount : 1,
       category: expense ? expense.category:"",
       description : expense ? expense.description : "",
       user : user._id
-    }
+    },
   });
 
   
@@ -63,11 +61,14 @@ const ExpenseForm = ({ expense, action }: ExpenseFormProps) => {
 
       });
       if (!updatedExpense) {
+
         toast({
           title: `${action} expense failed. Please try again.`,
         });
+        return router.refresh();
+
       }
-     router.replace(`/expenses/${expense._id}`);
+      return router.replace("/expenses");
     }
     
     const newExpense = await createExpense({
@@ -75,9 +76,11 @@ const ExpenseForm = ({ expense, action }: ExpenseFormProps) => {
       user: user._id,
     });
     if (!newExpense)
-      toast({
+      {toast({
         title: `${action} expense failed. Please try again.`,
       });
+      return router.refresh();
+    }
     router.replace("/expenses");
   }
   return (

@@ -114,8 +114,8 @@ export async function createNewUserAccount(user: INewUser) {
     try {
      
       //  Update expense
-      const updatedExpense = await axios.post(
-        JSON.stringify({ ...expense }),
+      const updatedExpense = await axios.put(EXPENSES_URL+'/'+expense._id,
+        JSON.stringify(expense),
         {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
@@ -128,6 +128,24 @@ export async function createNewUserAccount(user: INewUser) {
         throw Error;
       }  
       return updatedExpense;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  export async function deleteExpense(expenseId?: string) {
+  
+    try {
+      const statusCode = await axios.delete(EXPENSES_URL+'/'+expenseId,
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+  );
+  
+      if (!statusCode) throw Error;
+    
+      return { status: "Ok" };
     } catch (error) {
       console.log(error);
     }
@@ -181,8 +199,10 @@ if (!expenses) throw Error;
   export async function getExpenseById(expenseId?: string) {
   
     try {
-      const expense = await axios.get(EXPENSES_URL+'/'+expenseId).then(data=>{
-        
+      const expense = await axios.get(EXPENSES_URL+'/'+expenseId,{
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      }).then(data=>{        
        return data.data.data.expense});
       
   
