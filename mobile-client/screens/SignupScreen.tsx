@@ -3,12 +3,25 @@ import { Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View } from 
 import { useCreateUserAccount, useSignInAccount } from '../lib/react-query/queries';
 import AppContext from '../AppContext';
 import { INewUser } from '../types';
+import { Controller, useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { SignupSchema } from '../lib/vlaidations';
 
 const SignupScreen = () => {
     const { mutateAsync: createUserAccount, isPending: isCreatingUser } =
   useCreateUserAccount();
   const { mutateAsync: signInAccount, isPending: isSigningIn } =
   useSignInAccount();
+  const {control,handleSubmit } = useForm({
+    resolver: zodResolver(SignupSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      passwordConfirm:""
+    },
+  });
   const {isLoggedIn,setIsLoggedIn,setUserDetails,userDetails} = useContext(AppContext);
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -17,103 +30,116 @@ const SignupScreen = () => {
 
   const [isError, setIsError] = useState(false);
   const [message, setMessage] = useState('');
-  const [errors, setErrors] = useState<INewUser>({name:'', email:'', password:'',passwordConfirm:''}); 
   const [values, setValues] = useState<INewUser>({name:'', email:'', password:'',passwordConfirm:''}); 
-  const [isFormValid, setIsFormValid] = useState(false);
-  useEffect(() => { 
-  
-    setValues({name, email, password,passwordConfirm});
 
+  async function onSubmitHandler(values: z.infer<typeof SignupSchema>) {
+    const newUser = await createUserAccount(values);
     
-    validateForm(); 
-}, [name, email, password,passwordConfirm]);
-const validateForm = () => { 
-  let formValidationErrors = errors;  
-  formValidationErrors.email='wow'
-  console.log(formValidationErrors);
-  console.log(errors);
-  
-  // Validate name field 
-  if (!name) {
-    formValidationErrors={...errors,name:'Name is required.'}
+    if (!newUser)
+      return;
+    const session = await signInAccount({
+      email: values.email,
+      password: values.password,
+    });
+
+    if (!session)
+      return;
+    await setIsLoggedIn(true);
+    // const isLoggedIn = await checkAuthUser();
+    // if (isLoggedIn) {
+    //   control._reset()
+    //   // redirect("/expenses");
+    // } 
+    // else
+    //   return toast({
+    //     title: "Sign up failed. Please try again later.",
+    //   });
   }
-  else {
-    formValidationErrors={...errors,name:''}
-  }
-
-  // Validate email field 
-  if (!email) { 
-    setErrors({...errors,email:'Email is required.'})
-  } else if (!/\S+@\S+\.\S+/.test(email)) { 
-      setErrors({...errors,email:'Email is invalid.'})
-  } else {
-    setErrors({...errors,email:''})
-  }
-
-  // Validate password field 
-  if (!password) { 
-    setErrors({...errors,password:'Password is required.'})
-  } else if (password.length < 6) { 
-    setErrors({...errors,password:'Password must be at least 6 characters.'})
-  } else {
-    setErrors({...errors,password:''})
-  }
-
-  // Validate password field 
-  if (!passwordConfirm) {
-    setErrors({...errors,passwordConfirm:'Password confirm is required.'})
-  } else if (passwordConfirm.length < 6) { 
-  setErrors({...errors,passwordConfirm:'Password must be at least 6 characters.'})
-  } else if(password!==passwordConfirm)
-  setErrors({...errors,passwordConfirm:'Passwords are not matched'})
-  else {
-    setErrors({...errors,passwordConfirm:''})
-  }
-
-  // Set the errors and update form validity 
-  setErrors(formValidationErrors);
-  setIsFormValid(Object.keys(errors).length === 0); 
-
-}; 
-async function onSubmitHandler() {
-  const values:INewUser = {name, email, password,passwordConfirm};
-  return
-  const newUser = await createUserAccount(values);
-  
-  // if (!newUser)
-  //   return toast({
-  //     title: "Sign up failed. Please try again later.",
-  //   });
-  const session = await signInAccount({
-    email,
-    password
-  });
-
-  // if (!session)
-  //   return toast({
-  //     title: "Sign in failed. Please try again later.",
-  //   });
-  // const isLoggedIn = await checkAuthUser();
-  setIsLoggedIn(true);
-  // if (isLoggedIn) {
-  //   form.reset();
-  //   redirect("/expenses");
-  // } else
-  //   return toast({
-  //     title: "Sign up failed. Please try again later.",
-  //   });
-}
   return (
     <View style={styles.container}>
         <View style={styles.card}>
           
           <Text style={styles.helloText}> Create a new account</Text>
-          <TextInput style={styles.textInput} placeholder="Email" autoCapitalize="none" onChangeText={setEmail}></TextInput>
-          <TextInput style={styles.textInput} placeholder="Name" onChangeText={setName}></TextInput>
-          <TextInput secureTextEntry={true} style={styles.textInput} placeholder="Password" onChangeText={setPassword}></TextInput>
-          <TextInput secureTextEntry={true} style={styles.textInput} placeholder="Confirm Password" onChangeText={setPasswordConfirm}></TextInput>
-          <Text style={[styles.message, {color: isError ? 'red' : 'green'}]}>{message ? errors.name : null}</Text>
-          <TouchableOpacity  onPress={onSubmitHandler}  disabled={!isFormValid} style={ [styles.submitBtn,{ opacity: isFormValid ? 1 : 0.5 }]}>
+          <Text style={styles.message}>Enter your details</Text>
+
+          <Controller
+          control={control}
+          name={'email'}
+          render={({ field: { value, onChange, onBlur },fieldState: { error }})=>(
+            <>
+            <Text style={styles.errorMessage}>
+            {error && error.message}
+                  </Text>
+                  <TextInput
+            placeholder='email'
+            style={styles.textInput}
+            value={value}
+            onChangeText={onChange}
+            onBlur={onBlur}
+            />
+            
+            </>)}
+            />
+          <Controller
+          control={control}
+          name={'name'}
+          render={({ field: { value, onChange, onBlur },fieldState: { error }})=>(
+            <>
+            <Text style={styles.errorMessage}>
+            {error && error.message}
+                  </Text>
+                  <TextInput
+            placeholder='name'
+            style={styles.textInput}
+            value={value}
+            onChangeText={onChange}
+            onBlur={onBlur}
+            />
+            
+            </>)}
+            />          
+            <Controller
+          control={control}
+          name={'password'}
+          render={({ field: { value, onChange, onBlur },fieldState: { error }})=>(
+            <>
+            <Text style={styles.errorMessage}>
+            {error && error.message}
+                  </Text>
+                  <TextInput
+            placeholder='password'
+            secureTextEntry={true}
+            style={styles.textInput}
+            value={value}
+            onChangeText={onChange}
+            onBlur={onBlur}
+            />
+            
+            </>)}
+            /> 
+            
+            <Controller
+          control={control}
+          name={'passwordConfirm'}
+          render={({ field: { value, onChange, onBlur },fieldState: { error }})=>(
+            <>
+             <Text style={styles.errorMessage}>
+            {error && error.message}
+                  </Text>
+        <TextInput
+            placeholder='Confirm password'
+            secureTextEntry={true}
+            style={styles.textInput}
+            value={value}
+            onChangeText={onChange}
+            onBlur={onBlur}
+            />
+            
+            </>
+            
+            )}
+            />
+          <TouchableOpacity  onPress={handleSubmit(onSubmitHandler)}  disabled={false} style={ [styles.submitBtn,{ opacity: true ? 1 : 0.5 }]}>
               <Text >Signup</Text>
           </TouchableOpacity>
                       
@@ -131,16 +157,14 @@ const screenWidth = Dimensions.get("screen").width;
       flex: 1,
       backgroundColor: "#ffff",
       alignItems: "center",
-      // justifyContent: 'center',
-      // paddingTop: a,
     },
     card: {
       flex: 1,
       backgroundColor: "#1f1f1f",
       width: '90%',
-      marginTop: '40%',
+      marginTop: '20%',
       borderRadius: 20,
-      maxHeight: 400,
+      maxHeight: 500,
       padding: '10%',
   },
     helloText: {
@@ -166,7 +190,7 @@ const screenWidth = Dimensions.get("screen").width;
       borderRadius: 25,
       color: "white",
       textAlign: "center",
-      marginBottom: 15,
+      marginVertical: 15,
       alignItems:'center'
     },
     buttonAlt: {
@@ -188,4 +212,8 @@ const screenWidth = Dimensions.get("screen").width;
       fontSize: 16,
       marginVertical: '5%',
   },
+  errorMessage: {
+    fontSize: 12,
+    color:'red'
+},
   });

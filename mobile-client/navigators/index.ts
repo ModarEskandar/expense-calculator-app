@@ -1,5 +1,5 @@
+import AppNavigator from './AppNavigator';
 import AuthNavigator from './AuthNavigator';
 import MainNavigator from './MainNavigator';
 
-export { AuthNavigator };
-export { MainNavigator };
+export { AppNavigator,AuthNavigator, MainNavigator };

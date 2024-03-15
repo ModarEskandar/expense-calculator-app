@@ -5,13 +5,13 @@ const Stack = createNativeStackNavigator();
 
 function AuthNavigator() {
   return (
-    <Stack.Navigator initialRouteName="SignupScreen">
+    <Stack.Navigator initialRouteName="Signin">
       <Stack.Screen
-        name="SignupScreen"
+        name="Signup"
         component={SignupScreen}
       />
       <Stack.Screen
-        name="SigninScreen"
+        name="Signin"
         component={SigninScreen}
       />
     </Stack.Navigator>

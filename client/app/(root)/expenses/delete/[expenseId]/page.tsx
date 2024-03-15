@@ -17,7 +17,6 @@ const DeleteExpense = () => {
     const router = useRouter()
     const deleteExpenseSubmit =  async () => {
       const updatedExpense = await deleteExpense(expense?._id!);
-      console.log(updatedExpense);
       
       if (!updatedExpense) {
         

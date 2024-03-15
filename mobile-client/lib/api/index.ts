@@ -1,7 +1,33 @@
 import { Expense, INewExpense, INewUser, IUpdateExpense, IUser } from "../../types";
 import axios from "./axios";
 import { CATEGORIES_URL, EXPENSES_URL, ME_URL, RESET_PASSWORD_REQUEST_URL, SIGNIN_URL, SIGNUP_URL } from "../../constants";
+import * as SecureStore from 'expo-secure-store';
 
+axios.interceptors.response.use(
+  response => {
+    return response;
+  },
+  error => {
+    if (error.request && error.request.status === 401) {
+      signOutUser();
+      // // Set Failed Request
+      // let failedRequest = error.config;
+      
+      // //Method to get new token
+      // return renewUserToken().then(response => {
+      //   // Set axios instance header
+      //   axios.defaults.headers['Authorization'] = 'Bearer ' + response.token;
+        
+      //   // Set failed request header
+      //   failedRequest.headers['Authorization'] = 'Bearer ' + response.token;
+        
+      //   //Retry failed request
+      //   return axios.request(failedRequest);
+      // });
+    }
+    throw error;
+  },
+);
 // Set the JWT token as a default header after login
 export const setAuthToken = (token:string) => {  
   if (token) {
@@ -13,6 +39,7 @@ export const setAuthToken = (token:string) => {
 
 export async function createNewUserAccount(user: INewUser) {    
     try {
+      
       const newUser = await axios.post(
         SIGNUP_URL,JSON.stringify({ ...user}),
         {
@@ -23,14 +50,18 @@ export async function createNewUserAccount(user: INewUser) {
       if (!newUser) throw Error;
       
       return newUser;
-    } catch (error) {
-      console.log(error);
-      return error;
+    } catch (error:any) {
+      if (error?.response?.status === 409) {
+        console.log("Email Already Exist Taken",error);
+      } else {
+        console.log("Registration Failed",error);
+      }
     }
   }
 
   export async function signInUser( email: string, password: string ) {
     try {
+
       const response = await axios.post(SIGNIN_URL,
         JSON.stringify({ email, password }),
         {
@@ -38,16 +69,13 @@ export async function createNewUserAccount(user: INewUser) {
           withCredentials: true,
         });
         const accessToken = response?.data?.accessToken;
-        localStorage.setItem("cookieFallback",accessToken);
+        await SecureStore.setItemAsync('token', accessToken);
         setAuthToken(accessToken);
 
-      return response;
+      return accessToken;
     } catch (error:any) {
-        if (error?.response?.status === 409) {
-            console.log("Email Already Exist Taken",error);
-          } else {
-            console.log("Registration Failed",error);
-          }
+      console.log("Signin Failed, please check your credetials",error);
+
     }
   }
 
@@ -67,10 +95,10 @@ export async function createNewUserAccount(user: INewUser) {
     }
   }
 
-  export function signOutUser() {
+  export async function signOutUser() {
     try {
-        localStorage.removeItem("cookieFallback");
-       setAuthToken('');
+      await SecureStore.deleteItemAsync('token');
+      setAuthToken('');
     } catch (error) {
       console.log(error);
     }
@@ -111,8 +139,7 @@ export async function createNewUserAccount(user: INewUser) {
   };
 
   export async function updateExpense(expense: IUpdateExpense) {  
-    try {
-     
+    try {     
       //  Update expense
       const updatedExpense = await axios.put(EXPENSES_URL+'/'+expense._id,
         JSON.stringify(expense),
@@ -166,6 +193,7 @@ export async function createNewUserAccount(user: INewUser) {
   };
 
   export const getRecentExpenses = async () => {
+
     const expenses = await axios.get(
       EXPENSES_URL,{
         params: {

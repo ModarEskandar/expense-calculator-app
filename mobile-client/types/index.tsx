@@ -26,13 +26,16 @@ export type INavLink = {
     checkAuthUser: () => Promise<boolean>;
   };
 
+  export type ExpenseCardProps = {
+    expense: ExpenseWithNames;
+  };
   export type ExpenseFormProps = {
-    expense?: Expense;
+    expense?: ExpenseWithNames;
     action: "Create" | "Update";
   };
 
   export type ExpenseTableProps = {
-    data: Expense[];
+    data: ExpenseWithNames[];
     categories: Category[]
   };
 
@@ -43,6 +46,17 @@ export type INavLink = {
     amount:number;
     description:string;
     category: string;
+    user:string;
+  };
+
+  export type ExpenseWithNames = {
+    _id: string;
+    name: string;
+    date: Date;
+    amount:number;
+    description:string;
+    category: string;
+    categoryName: string;
     user:string;
   };
 

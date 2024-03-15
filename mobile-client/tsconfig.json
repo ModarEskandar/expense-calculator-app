@@ -17,7 +17,7 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.tsx"
-  ],
+, "navigators/MainNavigator.jsx", "App.tsx"  ],
   "exclude": [
     "node_modules"
   ]
