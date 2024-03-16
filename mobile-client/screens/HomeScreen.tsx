@@ -5,13 +5,16 @@ import { useGetCategories, useGetRecentExpenses } from '../lib/react-query/queri
 import { Category, Expense, ExpenseWithNames } from '../types';
 import { styles } from '../styles';
 import ExpenseCard from '../components/ExpenseCard';
-import { PlusCircleIcon, SearchIcon } from 'lucide-react-native';
+import { Loader, PlusCircleIcon, SearchIcon } from 'lucide-react-native';
 import { FAB } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import ExpensesTable from '../components/ExpensesTable';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { signOutUser } from '../lib/api';
+import { useUserContext } from '../AuthContext';
 
 const HomeScreen = () => {
-  
+  const {isLoggedIn,setIsLoggedIn,setUserDetails,userDetails} = useUserContext();
 
     const { data: expenses, isPending: isExpensesLoading,isFetchedAfterMount } = useGetRecentExpenses();
     const { data: categories, isPending: isCategoriesLoading } = useGetCategories();
@@ -29,7 +32,8 @@ const HomeScreen = () => {
           for (var i = 0, len = expenses.length; i < len; i++) {        
             const expense = expenses[i];      
             const index = categories.findIndex((cat:Category)=>cat._id===expense.category);      
-             expensesWithNames.push({...expense,categoryName:index?categories[index].name:''})
+             expensesWithNames.unshift({...expense,categoryName:index?categories[index].name:''})
+            //  expensesWithNames.push({...expense,categoryName:index?categories[index].name:''})
           }
           
           setTableData(expensesWithNames)
@@ -38,36 +42,29 @@ const HomeScreen = () => {
         let expensesWithNames: ExpenseWithNames[]=[];
         
         
-    const [tableData,setTableData] = useState<ExpenseWithNames[]>([]); 
-//   return (<>
-//       <View >
-
-//       <FlatList
-//       data={tableData}
-//       keyExtractor={expense => expense._id+expense.date}
-//       renderItem={({ item }) => (
-//         <ExpenseCard expense={item}/>
-//       )}
-    
-//     />
-//     <TouchableOpacity
-//   style={[styles.textInput,{ opacity: true ? 1 : 0.5 }]} onPress={navigateToAddExpense}
-// >
-// <FAB
-//                 style={styles.fab}
-//                 icon="plus"
-//                 label="Add more"
-//             /></TouchableOpacity>
-//       </View>
-// </>
-//   )
+    const [tableData,setTableData] = useState<ExpenseWithNames[]>([]);
+    const handleSignOutUser = ()=>{
+      signOutUser();
+      setIsLoggedIn(false);
+      navigation.navigate('Signin');
+    }
 
 
-return(<>
+return(<SafeAreaView>
 
-<View style={{height:'auto'}}>
-  
-  <ExpensesTable data={tableData} categories={categories!}/>
+<View style={{height:'auto',marginVertical:20}}>
+<View style={styles.mainHeader}>
+<Text style={styles.navLink}> Expenses List</Text>
+        <TouchableOpacity onPress={() => handleSignOutUser()}>
+          <Text
+            style={styles.navLink}
+          >
+            Signout
+          </Text>
+        </TouchableOpacity>         
+          </View>
+
+  {!expenses && !categories && isExpensesLoading && isCategoriesLoading?(<Loader/>):(<ExpensesTable data={tableData} categories={categories!}/>)}
   
 </View>
 <View style={{marginTop:100}}>
@@ -79,7 +76,8 @@ return(<>
                 icon="plus"
                 label=""
             /></TouchableOpacity>
-</View></>
+            
+</View></SafeAreaView>
 )
 }
 

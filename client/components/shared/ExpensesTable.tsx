@@ -319,7 +319,7 @@ export const columns: ColumnDef<Expense>[] = [
         </div>
         
         <div className="rounded-md border">
-          <Table>
+          <Table >
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>

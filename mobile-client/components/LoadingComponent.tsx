@@ -4,14 +4,17 @@ import { Text, View } from 'react-native'
 import { styles } from '../styles'
 import AppContext from '../AppContext'
 import { useNavigation } from '@react-navigation/native'
+import { useUserContext } from '../AuthContext'
 
 const LoadingComponent = () => {
-    const {isLoggedIn,setIsLoggedIn} = useContext(AppContext);
+    // const {isLoggedIn,setIsLoggedIn} = useContext(AppContext);
+    const {isLoggedIn,isLoading} = useUserContext();
+
     const navigation = useNavigation();
 
     useEffect(() => {
-        isLoggedIn? navigation.navigate('Home'):navigation.navigate('Signin');
-    }, [isLoggedIn])
+        !isLoading?isLoggedIn? navigation.navigate('Home'):navigation.navigate('Signin'):false;
+    }, [isLoggedIn,isLoading])
     
     return (
 <View style={[styles.container,{paddingVertical: '50%'}]}>

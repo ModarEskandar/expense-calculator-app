@@ -105,6 +105,7 @@ export async function createNewUserAccount(user: INewUser) {
   }
   
   export const getCurrentUser = async () => {
+    
     try {
         
       const currentAccount = axios.get(ME_URL).then(response=>{
@@ -182,9 +183,8 @@ export async function createNewUserAccount(user: INewUser) {
     const categories = await axios.get(
       CATEGORIES_URL
 ).then(response=>
-  {
+  {    
     return response.data.data.categories;
-
   } 
 );
 

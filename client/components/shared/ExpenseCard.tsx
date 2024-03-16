@@ -3,6 +3,7 @@
 import { useUserContext } from "@/app/context/AuthContext";
 import { Expense } from "@/app/types";
 import { multiFormatDateString } from "@/lib/utils";
+import Image from "next/image";
 import Link from "next/link";
 
 type ExpenseCardProps = {
@@ -38,7 +39,7 @@ const ExpenseCard = ( {expense} : ExpenseCardProps) => {
         <Link
           href={`/expenses/edit/${expense._id}`}
         >
-          <img
+          <Image
             src={"/assets/icons/edit.svg"}
             alt="edit"
             width={20}

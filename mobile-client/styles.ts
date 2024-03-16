@@ -48,11 +48,23 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     marginVertical:10
   },
+  mainHeader: {
+    flexDirection: "row",
+    margin:10,
+    justifyContent:'space-between'
+  },
     helloText: {
       color: "white",
       marginBottom: 30,
       fontSize: 25,
       textAlign:'center'
+    },
+    navLink: {
+      color: "purple",
+      marginBottom: 30,
+      fontSize: 25,
+      textAlign:'center',
+      fontWeight: "500"
     },
     textInput: {
       padding: 5,

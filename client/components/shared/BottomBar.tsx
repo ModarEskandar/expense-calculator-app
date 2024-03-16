@@ -2,6 +2,7 @@
 
 import { bottombarLinks } from "@/app/constants";
 import { INavLink } from "@/app/types";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -20,7 +21,7 @@ const BottomBar = () => {
                 isActive && "bg-primary-500 rounded-md"
               }`}
             >
-              <img
+              <Image
                 src={link.img_url}
                 alt={link.label}
                 width={16}

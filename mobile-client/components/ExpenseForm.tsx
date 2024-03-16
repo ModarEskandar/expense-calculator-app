@@ -11,6 +11,7 @@ import { z } from 'zod';
 import { useNavigation } from '@react-navigation/native';
 import SelectDropdown from 'react-native-select-dropdown'
 import { ArrowDownIcon, ArrowUpIcon, ChevronDownIcon, ChevronUpIcon, TvIcon } from 'lucide-react-native';
+import { useUserContext } from '../AuthContext';
 
 const ExpenseForm = ({ expense, action }: ExpenseFormProps) => {
     const { mutateAsync: createExpense, isPending: isCreatingExpense } =
@@ -18,9 +19,10 @@ const ExpenseForm = ({ expense, action }: ExpenseFormProps) => {
     const { mutateAsync: updateExpense, isPending: isUpdatingExpense } =
     useUpdateExpense();
     const { data: categories, isPending: isCategoriesLoading } = useGetCategories();
-    const {userDetails} = useContext(AppContext);
-    const navigation = useNavigation();
+    // const {userDetails} = useContext(AppContext);
+    const {isLoggedIn,setIsLoggedIn,setUserDetails,userDetails} = useUserContext();
 
+    const navigation = useNavigation();
     const {control,handleSubmit } = useForm({
         resolver: zodResolver(ExpenseSchema),
         defaultValues: {
@@ -29,9 +31,14 @@ const ExpenseForm = ({ expense, action }: ExpenseFormProps) => {
             amount: expense ? expense.amount.toString() : "1",
             category: expense ? expense.category:"",
             description : expense ? expense.description : "",
-            user : expense ? expense.user : 'userDetails._id'
+            user : expense ? expense.user : userDetails._id
           },
       });
+      useEffect(() => {
+        console.log(categories);
+        
+      }, [])
+      
       async function onSubmitHandler(values: z.infer<typeof ExpenseSchema>) {
         
         if (expense && action === "Update") {

@@ -9,6 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { SignupSchema } from '../lib/vlaidations';
 import { styles } from '../styles';
 import { useNavigation } from '@react-navigation/native';
+import { useUserContext } from '../AuthContext';
 
 const SignupScreen = () => {
     const { mutateAsync: createUserAccount, isPending: isCreatingUser } =
@@ -24,7 +25,9 @@ const SignupScreen = () => {
       passwordConfirm:""
     },
   });
-  const {isLoggedIn,setIsLoggedIn,setUserDetails,userDetails} = useContext(AppContext);
+  // const {isLoggedIn,setIsLoggedIn,setUserDetails,userDetails} = useContext(AppContext);
+  const {isLoggedIn,setIsLoggedIn,setUserDetails,userDetails} = useUserContext();
+
   const navigation = useNavigation();
 
   async function onSubmitHandler(values: z.infer<typeof SignupSchema>) {

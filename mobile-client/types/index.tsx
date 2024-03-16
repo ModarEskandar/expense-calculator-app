@@ -18,11 +18,11 @@ export type INavLink = {
     passwordConfirm: string;
   };  
   export type IContextType = {
-    user: IUser;
+    userDetails: IUser;
     isLoading: boolean;
-    setUser: React.Dispatch<React.SetStateAction<IUser>>;
-    isAuthenticated: boolean;
-    setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+    setUserDetails: React.Dispatch<React.SetStateAction<IUser>>;
+    isLoggedIn: boolean;
+    setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
     checkAuthUser: () => Promise<boolean>;
   };
 

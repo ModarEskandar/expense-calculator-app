@@ -17,11 +17,13 @@ const ExpensesTable = ({data,categories}:ExpenseTableProps) => {
 
   const from = page * itemsPerPage;
   const to = Math.min((page + 1) * itemsPerPage, searchResults.length);
-  const isLastDeleted = from+1===to;
   useEffect(() => {
-    
+    setSearchResults(data);
+  }, [data]);
+  useEffect(() => {
+
     setPage(0);
-  }, [itemsPerPage,isLastDeleted]);
+  }, [itemsPerPage,searchResults]);
   const navigation = useNavigation();
   const { mutateAsync: deleteExpense, isPending: isDeletingExpense } =
   useDeleteExpense();
