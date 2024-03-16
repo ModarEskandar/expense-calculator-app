@@ -8,12 +8,10 @@ export const styles = StyleSheet.create({
       alignItems: "center",
     },
     card: {
-      flex: 1,
       backgroundColor: "#1f1f1f",
       width: '90%',
       marginTop: '20%',
       borderRadius: 20,
-      maxHeight: 500,
       padding: '10%',
   },
   expenseFormContainer:{flex: 1,
@@ -34,7 +32,21 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#3b3b3b",
     elevation: 10,
-
+  },
+  searchContainer: {
+    flexDirection: "row",
+    paddingHorizontal: 10,
+    paddingTop: 10,
+    borderRadius: 10,
+    marginVertical: 14,
+    marginHorizontal:10,
+    alignItems: "center",
+    backgroundColor: "#3b3b3b",
+    elevation: 10,
+  },
+  formFooter: {
+    flexDirection: "row",
+    marginVertical:10
   },
     helloText: {
       color: "white",
@@ -47,6 +59,19 @@ export const styles = StyleSheet.create({
       paddingStart: 15,
       backgroundColor: "#3b3b3b",
       width: screenWidth * 0.7,
+      borderRadius: 15,
+      marginBottom: 15,
+      color: "white",
+      fontWeight: "600",
+
+    },
+    searchInput: {
+      padding: 5,
+      paddingStart: 15,
+      backgroundColor: "#ffffff",
+      width: screenWidth * 0.28,
+      borderColor:'white',
+      marginTop:5,
       borderRadius: 15,
       marginBottom: 15,
       color: "white",

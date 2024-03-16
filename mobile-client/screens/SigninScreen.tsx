@@ -49,8 +49,8 @@ const SigninScreen = () => {
     //   });
   }
   return (
-    <View style={styles.container}>
-        <View style={styles.card}>
+    <View style={[styles.container,{paddingVertical:"40%"}]}>
+        <View style={[styles.card,{paddingVertical:"20%"}]}>
           
           <Text style={styles.helloText}> Signin using your account</Text>
           <Text style={styles.message}>Enter your account details</Text>
@@ -99,7 +99,17 @@ const SigninScreen = () => {
           <TouchableOpacity  onPress={handleSubmit(onSubmitHandler)}  disabled={false} style={ [styles.submitBtn,{ opacity: true ? 1 : 0.5 }]}>
               <Text >Signin</Text>
           </TouchableOpacity>
-                      
+          <View style={styles.formFooter}>
+          <Text style={{ color: 'white' }}>Don't have an account?</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
+          <Text
+            style={{ marginStart: 5, color: 'purple', fontWeight: "500" }}
+          >
+            Sign Up
+          </Text>
+        </TouchableOpacity>         
+          </View>
+          
 
         </View>
     </View>

@@ -27,7 +27,7 @@ export default function App() {
           name: currentAccount.name,
           email: currentAccount.email
         });
-        setIsLoggedIn(true);        
+        setIsLoggedIn(true);       
         return true;
       }
       
@@ -38,7 +38,6 @@ export default function App() {
     }
   };
   useEffect(() => {
-    console.log('aaa');
     
     const accessToken = SecureStore.getItem('token');
 
